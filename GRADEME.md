@@ -47,10 +47,13 @@ This means that helgrind is looking more preemptively for out of order locks, it
    Why is this code inefficient? (what does the parent end up spending its time doing, particularly if the child thread takes a long time
    to complete?)
 
+**Answer**: This code is inefficient because the parent thread is spin waiting during its entire time slice, which is wasting CPU cycles.
+
 9. Run helgrind on this program. 
    * What does it report? 
    * Is the code correct?
 
+**Answer**: It reports that there is a possible data race condition at lines 9 and 16 (done == 0 and done = 1). While this could technically lead to a race condition at an unfortunate context switch, the last line should always print last. 
 
 10. Now look at the slightly modified version of the code found
    in `main-signal-cv`.c. This version uses a condition variable to
@@ -58,5 +61,9 @@ This means that helgrind is looking more preemptively for out of order locks, it
    * Why is this code preferred to the previous version? 
    * Is it correctness, or performance, or both?
 
+**Answer**: Because rather than spin waiting, the condition variable puts the main thread to sleep. 
+
 11. Once again run helgrind on `main-signal-cv`. Does it report
    any errors?
+
+**Answer**:   There are no errors reported.
